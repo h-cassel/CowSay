@@ -1,10 +1,22 @@
 use serenity::builder::CreateCommand;
 use serenity::model::application::ResolvedOption;
 
-pub fn run(_options: &[ResolvedOption]) -> String {
-    "Hey, I'm alive!".to_string()
-}
+use crate::state::StateHandle;
 
-pub fn register() -> CreateCommand {
-    CreateCommand::new("ping").description("A ping command")
+use super::slash::SlashCommand;
+
+pub struct Ping;
+
+impl SlashCommand for Ping {
+    fn new(_state_ref: StateHandle) -> Self {
+        Self
+    }
+
+    fn run(&self, _options: &[ResolvedOption]) -> String {
+        "Pong!".to_string()
+    }
+
+    fn register() -> CreateCommand {
+        CreateCommand::new("ping").description("Replies with Pong!")
+    }
 }

@@ -1,6 +1,10 @@
 mod commands;
+mod state;
+
+use commands::slash::SlashCommand;
 
 use std::env;
+use std::sync::Arc;
 
 use serenity::all::{
     CreateInteractionResponse, CreateInteractionResponseMessage, GuildId, Interaction, Ready,
@@ -8,14 +12,23 @@ use serenity::all::{
 use serenity::async_trait;
 use serenity::prelude::*;
 
-struct Handler;
+struct Handler {
+    state_handle: state::StateHandle,
+}
 
 #[async_trait]
 impl EventHandler for Handler {
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
         if let Interaction::Command(command) = interaction {
-            let content = match command.data.name.as_str() {
-                "ping" => Some(commands::ping::run(&command.data.options())),
+            let name = command.data.name.as_str();
+
+            println!("Received command: {}", name);
+
+            let content = match name {
+                "ping" => Some(
+                    commands::ping::Ping::new(self.state_handle.clone())
+                        .run(&command.data.options()),
+                ),
                 _ => Some("not implemented :(".to_string()),
             };
 
@@ -40,7 +53,7 @@ impl EventHandler for Handler {
         );
 
         let commands = guild_id
-            .set_commands(&ctx.http, vec![commands::ping::register()])
+            .set_commands(&ctx.http, vec![commands::ping::Ping::register()])
             .await;
 
         println!(
@@ -57,9 +70,13 @@ async fn main() {
     // Set gateway intents, which decides what events the bot will be notified about
     let intents = GatewayIntents::GUILD_MESSAGES | GatewayIntents::MESSAGE_CONTENT;
 
+    let state = state::BotState::new();
+
+    let state_handle: state::StateHandle = Arc::new(Mutex::new(state));
+
     // Create a new instance of the Client, logging in as a bot.
     let mut client = Client::builder(&token, intents)
-        .event_handler(Handler)
+        .event_handler(Handler { state_handle })
         .await
         .expect("Err creating client");
 
