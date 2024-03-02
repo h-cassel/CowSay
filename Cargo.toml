@@ -1,0 +1,11 @@
+[package]
+name = "cow-say-bot"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serenity = "0.12.1"
+tokio = { version = "1.36.0", features = ["macros", "full"] }
+tokio-listener = "0.3.1"
