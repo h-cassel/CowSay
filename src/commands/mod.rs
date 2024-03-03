@@ -3,6 +3,9 @@ use crate::{
     state::StateHandle,
 };
 
+pub mod cancel;
+pub mod pause;
+pub mod resume;
 pub mod info;
 pub mod ping;
 pub mod brightness;
