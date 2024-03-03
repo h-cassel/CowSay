@@ -5,11 +5,11 @@ use crate::commands::send_cmd;
 use crate::klipper::Request;
 use crate::state::StateHandle;
 
-pub struct Resume {
+pub struct Estop {
     state_ref: StateHandle,
 }
 
-impl Resume {
+impl Estop {
     pub fn new(state_ref: StateHandle) -> Self {
         Self { state_ref }
     }
@@ -17,13 +17,13 @@ impl Resume {
     pub async fn run<'a>(&self, _options: &[ResolvedOption<'a>]) -> String {
         send_cmd(
             &self.state_ref,
-            Request::new("pause_resume/resume".to_string(), None),
+            Request::new("emergency_stop".to_string(), None),
         )
         .await;
-        "Resumed".to_string()
+        "Emergency Stop".to_string()
     }
 
     pub fn register() -> CreateCommand {
-        CreateCommand::new("resume").description("Resumes current print")
+        CreateCommand::new("estop").description("Stops current print")
     }
 }

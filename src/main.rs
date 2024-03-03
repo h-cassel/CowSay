@@ -63,6 +63,11 @@ impl EventHandler for Handler {
                         .run(&command.data.options())
                         .await,
                 ),
+                "estop" => Some(
+                    commands::estop::Estop::new(self.state_handle.clone())
+                        .run(&command.data.options())
+                        .await,
+                ),
                 "print" => Some(
                     commands::queue::add::Add::new(self.state_handle.clone())
                         .run(&command.user, &command.data.options())
@@ -112,6 +117,7 @@ impl EventHandler for Handler {
                     commands::cancel::Cancel::register(),
                     commands::pause::Pause::register(),
                     commands::resume::Resume::register(),
+                    commands::estop::Estop::register(),
                     commands::queue::add::Add::register(),
                     commands::queue::view::View::register(),
                     commands::queue::clear::Clear::register(),
