@@ -44,7 +44,7 @@ impl KlippyConnection {
                     let mut data = vec![0; 1024];
                     // Try to read data, this may still fail with `WouldBlock`
                     // if the readiness event is a false positive.
-                    self.sock.read_exact(&mut data).await.unwrap();
+                    self.sock.read(&mut data).await.unwrap();
                     let data = String::from_utf8(data).unwrap();
                     println!("Raw data: {}", data);
                     let parts = data.split(SEP_CHAR);
