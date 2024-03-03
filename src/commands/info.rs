@@ -21,7 +21,7 @@ impl Info {
     pub async fn run<'a>(&self, _options: &[ResolvedOption<'a>]) -> String {
         let state = self.state_ref.lock().await;
         let cmd = Request::new(
-            "object/query".to_string(),
+            "objects/query".to_string(),
             Value::from_str(QUERY_PARAMS).unwrap(),
         );
         let rx = state.resp_channel.0.subscribe();

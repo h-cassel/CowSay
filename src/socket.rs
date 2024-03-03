@@ -50,8 +50,9 @@ impl KlippyConnection {
                     for msg in parts {
                         if !msg.is_empty() {
                             println!("Received data: {}", msg);
-                            let resp = serde_json::from_str(msg).unwrap();
-                            tx.send(resp).unwrap();
+                            if let Ok(resp) = serde_json::from_str::<Response>(msg) {
+                                tx.send(resp).unwrap();
+                            }
                         }
                     }
                 }
