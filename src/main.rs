@@ -73,7 +73,7 @@ impl EventHandler for Handler {
 
         println!(
             "I setup {} slash command(s)!",
-            commands.map(|c| c.len()).unwrap_or(0)
+            commands.map(|c| c.len()).unwrap()
         );
     }
 }

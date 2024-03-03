@@ -22,6 +22,9 @@ impl KlippyConnection {
         tx: broadcast::Sender<Response>,
         mut rx: broadcast::Receiver<Request>,
     ) {
+
+        println!("Starting req_resp_loop");
+        
         loop {
             let ready = self
                 .sock
@@ -29,7 +32,10 @@ impl KlippyConnection {
                 .await
                 .unwrap();
 
+            println!("Ready: {:?}", ready);
+
             if ready.is_readable() {
+                println!("Reading data");
                 let mut data = vec![0; 1024];
                 // Try to read data, this may still fail with `WouldBlock`
                 // if the readiness event is a false positive.
@@ -45,6 +51,7 @@ impl KlippyConnection {
             }
 
             if ready.is_writable() {
+                println!("Writing data");
                 let req = rx.recv().await.unwrap();
                 let req = serde_json::to_string(&req).unwrap();
                 self.sock

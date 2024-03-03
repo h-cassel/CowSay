@@ -31,6 +31,6 @@ impl Info {
     }
 
     pub fn register() -> CreateCommand {
-        CreateCommand::new("ping").description("Replies with Pong!")
+        CreateCommand::new("info").description("Get printer info")
     }
 }
