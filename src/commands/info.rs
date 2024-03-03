@@ -4,6 +4,7 @@ use serde_json::Value;
 use serenity::builder::CreateCommand;
 use serenity::model::application::ResolvedOption;
 
+use crate::commands::send_cmd;
 use crate::klipper::Request;
 use crate::state::StateHandle;
 
@@ -19,14 +20,14 @@ impl Info {
     }
 
     pub async fn run<'a>(&self, _options: &[ResolvedOption<'a>]) -> String {
-        let state = self.state_ref.lock().await;
-        let cmd = Request::new(
-            "objects/query".to_string(),
-            Value::from_str(QUERY_PARAMS).unwrap(),
-        );
-        let rx = state.resp_channel.0.subscribe();
-        let tx = state.req_channel.0.clone();
-        let resp = cmd.send(tx, rx).await;
+        let resp = send_cmd(
+            &self.state_ref,
+            Request::new(
+                "objects/query".to_string(),
+                Value::from_str(QUERY_PARAMS).unwrap(),
+            ),
+        )
+        .await;
         format!("Info: {:?}", resp)
     }
 

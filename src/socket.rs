@@ -1,4 +1,3 @@
-
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     net::{UnixSocket, UnixStream},
@@ -23,9 +22,8 @@ impl KlippyConnection {
         tx: broadcast::Sender<Response>,
         mut rx: broadcast::Receiver<Request>,
     ) {
-
         println!("Starting req_resp_loop");
-        
+
         loop {
             tokio::select! {
                 req = rx.recv() => {
@@ -34,7 +32,7 @@ impl KlippyConnection {
                         let msg = format!("{req}{SEP_CHAR}");
                         println!("Sending data: {}", msg);
                         self.sock
-                            .write(msg.as_bytes())
+                            .write_all(msg.as_bytes())
                             .await
                             .unwrap();
                         self.sock.flush().await.unwrap();
@@ -44,7 +42,7 @@ impl KlippyConnection {
                     let mut data = vec![0; 1024];
                     // Try to read data, this may still fail with `WouldBlock`
                     // if the readiness event is a false positive.
-                    self.sock.read(&mut data).await.unwrap();
+                    self.sock.read_exact(&mut data).await.unwrap();
                     let data = String::from_utf8(data).unwrap();
                     let parts = data.split(SEP_CHAR);
                     for msg in parts {
@@ -58,6 +56,5 @@ impl KlippyConnection {
                 }
             }
         }
-
     }
 }
