@@ -142,13 +142,13 @@ const DEFAULT_SOCK_PATH: &str = "/home/pi/printer_data/comms/klippy.sock";
 
 #[tokio::main]
 async fn main() {
+    println!("Loading environment variables...");
     dotenv::dotenv().ok();
-    // Login with a bot token from the environment
     let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
-    // Set gateway intents, which decides what events the bot will be notified about
     let intents = GatewayIntents::GUILD_MESSAGES | GatewayIntents::MESSAGE_CONTENT;
 
     let socket_path = env::var("KLIP_SOCK_PATH").unwrap_or(DEFAULT_SOCK_PATH.to_string());
+    println!("Connecting to Klippy at {}", socket_path);
     let mut conn = KlippyConnection::new(socket_path).await;
 
     let state = state::BotState::new();
@@ -158,15 +158,15 @@ async fn main() {
     let tx = state_handle.lock().await.resp_channel.0.clone();
     let rx = state_handle.lock().await.req_channel.0.subscribe();
 
-    // send_cmd(&state_handle, Request::new("info".to_string(), json!({"client_info": { "name": "CowSay Bot", "version": env!("CARGO_PKG_VERSION") }}))).await;
-
-    // Create a new instance of the Client, logging in as a bot.
+    println!("Starting bot...");
     let mut client = Client::builder(&token, intents)
         .event_handler(Handler { state_handle })
         .await
         .expect("Err creating client");
 
     let a = { client.start().map(|r| r.ok()) };
+
+    println!("Starting main event loop");
 
     join!(a, conn.req_resp_loop(tx, rx));
 }

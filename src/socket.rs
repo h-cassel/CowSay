@@ -17,6 +17,7 @@ impl KlippyConnection {
         KlippyConnection { sock }
     }
 
+    #[allow(clippy::unused_io_amount)]
     pub async fn req_resp_loop(
         &mut self,
         tx: broadcast::Sender<Response>,
@@ -42,8 +43,6 @@ impl KlippyConnection {
                 _ = self.sock.readable() => {
                     println!("Socket is readable");
                     let mut data = vec![0; 1024];
-                    // Try to read data, this may still fail with `WouldBlock`
-                    // if the readiness event is a false positive.
                     self.sock.read(&mut data).await.unwrap();
                     let data = String::from_utf8(data).unwrap();
                     println!("Raw data: {}", data);
