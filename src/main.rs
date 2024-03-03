@@ -29,8 +29,13 @@ impl EventHandler for Handler {
                     commands::ping::Ping::new(self.state_handle.clone())
                         .run(&command.data.options()),
                 ),
+                "ferris-says" => Some(
+                    commands::ferris_says::FerrisSays::new(self.state_handle.clone())
+                        .run(&command.data.options()),
+                ),
                 _ => Some("not implemented :(".to_string()),
             };
+
 
             if let Some(content) = content {
                 let data = CreateInteractionResponseMessage::new().content(content);
@@ -53,12 +58,12 @@ impl EventHandler for Handler {
         );
 
         let commands = guild_id
-            .set_commands(&ctx.http, vec![commands::ping::Ping::register()])
+            .set_commands(&ctx.http, vec![commands::ping::Ping::register(), commands::ferris_says::FerrisSays::register()])
             .await;
 
         println!(
             "I setup {} slash command(s)!",
-            commands.map(|c| c.len()).unwrap_or(0)
+            commands.map(|c| c.len()).unwrap()
         );
     }
 }
