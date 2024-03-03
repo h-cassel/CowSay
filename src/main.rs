@@ -38,6 +38,11 @@ impl EventHandler for Handler {
                         .run(&command.data.options())
                         .await,
                 ),
+                "brightness" => Some(
+                    commands::brightness::Brightness::new(self.state_handle.clone())
+                        .run(&command.data.options())
+                        .await,
+                ),
                 _ => Some("not implemented :(".to_string()),
             };
 
@@ -67,6 +72,7 @@ impl EventHandler for Handler {
                 vec![
                     commands::ping::Ping::register(),
                     commands::info::Info::register(),
+                    commands::brightness::Brightness::register(),
                 ],
             )
             .await;

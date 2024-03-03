@@ -5,6 +5,7 @@ use crate::{
 
 pub mod info;
 pub mod ping;
+pub mod brightness;
 
 pub async fn send_cmd(state: &StateHandle, cmd: Request) -> Response {
     let state = state.lock().await;
