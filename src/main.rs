@@ -52,6 +52,21 @@ impl EventHandler for Handler {
                         .run(&command.data.options())
                         .await,
                 ),
+                "cancel" => Some(
+                    commands::cancel::Cancel::new(self.state_handle.clone())
+                        .run(&command.data.options())
+                        .await,
+                ),
+                "pause" => Some(
+                    commands::pause::Pause::new(self.state_handle.clone())
+                        .run(&command.data.options())
+                        .await,
+                ),
+                "resume" => Some(
+                    commands::resume::Resume::new(self.state_handle.clone())
+                        .run(&command.data.options())
+                        .await,
+                ),
                 _ => Some("not implemented :(".to_string()),
             };
 
@@ -83,6 +98,9 @@ impl EventHandler for Handler {
                     commands::info::Info::register(),
                     commands::brightness::Brightness::register(),
                     commands::ferris_says::FerrisSays::register(),
+                    commands::cancel::Cancel::register(),
+                    commands::pause::Pause::register(),
+                    commands::resume::Resume::register(),
                 ],
             )
             .await;
