@@ -30,7 +30,9 @@ impl Progress {
             if let Some(Value::Object(status)) = obj.get("status") {
                 if let Some(Value::Object(display_status)) = status.get("display_status") {
                     if let Some(Value::Number(progress)) = display_status.get("progress") {
-                        progress.as_f64().map(|dec| format!("Progress: {:.2}%", dec * 100.0))
+                        progress
+                            .as_f64()
+                            .map(|dec| format!("Progress: {:.2}%", dec * 100.0))
                     } else {
                         None
                     }
