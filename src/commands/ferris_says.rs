@@ -31,7 +31,7 @@ impl FerrisSays {
         let width = 24;
 
         let mut output: Vec<u8> = vec![];
-        say(&out, width, &mut output).unwrap();
+        say(out, width, &mut output).unwrap();
         let output = String::from_utf8(output).unwrap();
         let output2 = format!("```  \n  {output}  \n  ```");
 
