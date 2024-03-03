@@ -26,6 +26,9 @@ impl KlippyConnection {
         println!("Starting req_resp_loop");
         
         loop {
+
+            println!("Awaiting ready event");
+
             let ready = self
                 .sock
                 .ready(Interest::READABLE | Interest::WRITABLE)
@@ -35,7 +38,6 @@ impl KlippyConnection {
             println!("Ready: {:?}", ready);
 
             if ready.is_readable() {
-                println!("Reading data");
                 let mut data = vec![0; 1024];
                 // Try to read data, this may still fail with `WouldBlock`
                 // if the readiness event is a false positive.
@@ -44,6 +46,7 @@ impl KlippyConnection {
                 let parts = data.split(SEP_CHAR);
                 for msg in parts {
                     if !msg.is_empty() {
+                        println!("Received data: {}", msg);
                         let resp = serde_json::from_str(msg).unwrap();
                         tx.send(resp).unwrap();
                     }
@@ -51,14 +54,18 @@ impl KlippyConnection {
             }
 
             if ready.is_writable() {
-                println!("Writing data");
-                let req = rx.recv().await.unwrap();
-                let req = serde_json::to_string(&req).unwrap();
-                self.sock
-                    .write(format!("{req}{SEP_CHAR}").as_bytes())
-                    .await
-                    .unwrap();
+                if let Some(req) = rx.recv().await.ok() {
+                    let req = serde_json::to_string(&req).unwrap();
+                    let msg = format!("{req}{SEP_CHAR}");
+                    println!("Sending data: {}", msg);
+                    self.sock
+                        .write(msg.as_bytes())
+                        .await
+                        .unwrap();
+                    self.sock.flush().await.unwrap();
+                }
             }
+
         }
     }
 }
