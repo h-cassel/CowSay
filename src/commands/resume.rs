@@ -1,4 +1,3 @@
-
 use serenity::builder::CreateCommand;
 use serenity::model::application::ResolvedOption;
 

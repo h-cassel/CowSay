@@ -5,13 +5,11 @@ use crate::{
 
 pub mod brightness;
 pub mod cancel;
+pub mod estop;
 pub mod ferris_says;
 pub mod info;
 pub mod pause;
 pub mod ping;
-pub mod brightness;
-pub mod ferris_says;
-pub mod estop;
 pub mod queue;
 pub mod resume;
 

@@ -62,7 +62,7 @@ impl EventHandler for Handler {
                     commands::resume::Resume::new(self.state_handle.clone())
                         .run(&command.data.options())
                         .await,
-                ),                
+                ),
                 "estop" => Some(
                     commands::estop::Estop::new(self.state_handle.clone())
                         .run(&command.data.options())

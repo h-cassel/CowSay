@@ -1,6 +1,4 @@
-use serde_json::Value;
 use serenity::builder::CreateCommand;
-use serenity::json::json;
 use serenity::model::application::ResolvedOption;
 
 use crate::commands::send_cmd;
@@ -17,14 +15,12 @@ impl Estop {
     }
 
     pub async fn run<'a>(&self, _options: &[ResolvedOption<'a>]) -> String {
-        let resp = send_cmd(
+        send_cmd(
             &self.state_ref,
-            Request::new(
-                "emergency_stop".to_string(),
-                Value::Null
+            Request::new("emergency_stop".to_string(), None),
         )
-    ).await;
-    "Emergency Stop".to_string()
+        .await;
+        "Emergency Stop".to_string()
     }
 
     pub fn register() -> CreateCommand {
