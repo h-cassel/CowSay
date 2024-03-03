@@ -114,7 +114,7 @@ async fn main() {
     let tx = state_handle.lock().await.resp_channel.0.clone();
     let rx = state_handle.lock().await.req_channel.0.subscribe();
 
-    send_cmd(&state_handle, Request::new("info".to_string(), json!({"client_info": { "name": "CowSay Bot", "version": env!("CARGO_PKG_VERSION") }}))).await;
+    // send_cmd(&state_handle, Request::new("info".to_string(), json!({"client_info": { "name": "CowSay Bot", "version": env!("CARGO_PKG_VERSION") }}))).await;
 
     // Create a new instance of the Client, logging in as a bot.
     let mut client = Client::builder(&token, intents)
