@@ -25,7 +25,6 @@ impl Progress {
             ),
         )
         .await;
-        // Ugly but wtv
         let progress = if let Value::Object(obj) = resp.result {
             if let Some(Value::Object(status)) = obj.get("status") {
                 if let Some(Value::Object(display_status)) = status.get("display_status") {
