@@ -25,9 +25,9 @@ impl Brightness {
             if 0 <= *brightness && *brightness <= 100 {
                 let cmd = Request::new(
                     "gcode/script".to_string(),
-                    json!({
+                    Some(json!({
                         "script": format!("FLOOD_LIGHTS BRIGHTNESS={brightness}")
-                    }),
+                    })),
                 );
                 send_cmd(&self.state_ref, cmd).await;
                 format!("Brightness set to {}", brightness)

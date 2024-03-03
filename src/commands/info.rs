@@ -20,7 +20,7 @@ impl Info {
             &self.state_ref,
             Request::new(
                 "info".to_string(),
-                json!({"client_info": { "name": "CowSay Bot", "version": env!("CARGO_PKG_VERSION") }})
+                Some(json!({"client_info": { "name": "CowSay Bot", "version": env!("CARGO_PKG_VERSION") }}))
             ),
         )
         .await;
