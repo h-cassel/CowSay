@@ -1,7 +1,5 @@
-use std::str::FromStr;
-
-use serde_json::Value;
 use serenity::builder::CreateCommand;
+use serenity::json::json;
 use serenity::model::application::ResolvedOption;
 
 use crate::commands::send_cmd;
@@ -12,8 +10,6 @@ pub struct Info {
     state_ref: StateHandle,
 }
 
-const QUERY_PARAMS: &str = include_str!("obj_query.json");
-
 impl Info {
     pub fn new(state_ref: StateHandle) -> Self {
         Self { state_ref }
@@ -23,8 +19,8 @@ impl Info {
         let resp = send_cmd(
             &self.state_ref,
             Request::new(
-                "objects/query".to_string(),
-                Value::from_str(QUERY_PARAMS).unwrap(),
+                "info".to_string(),
+                json!({"client_info": { "name": "CowSay Bot", "version": env!("CARGO_PKG_VERSION") }})
             ),
         )
         .await;
