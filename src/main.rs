@@ -3,6 +3,7 @@ mod klipper;
 mod socket;
 mod state;
 
+use serenity::json::json;
 use socket::KlippyConnection;
 use tokio::join;
 
@@ -14,6 +15,9 @@ use serenity::all::{
 };
 use serenity::prelude::*;
 use serenity::{async_trait, FutureExt};
+
+use crate::commands::send_cmd;
+use crate::klipper::Request;
 
 struct Handler {
     state_handle: state::StateHandle,
@@ -109,6 +113,8 @@ async fn main() {
 
     let tx = state_handle.lock().await.resp_channel.0.clone();
     let rx = state_handle.lock().await.req_channel.0.subscribe();
+
+    send_cmd(&state_handle, Request::new("info".to_string(), json!({"client_info": { "name": "CowSay Bot", "version": env!("CARGO_PKG_VERSION") }}))).await;
 
     // Create a new instance of the Client, logging in as a bot.
     let mut client = Client::builder(&token, intents)
