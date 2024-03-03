@@ -36,14 +36,17 @@ impl KlippyConnection {
                             .await
                             .unwrap();
                         self.sock.flush().await.unwrap();
+                        println!("Sent data");
                     }
                 }
                 _ = self.sock.readable() => {
+                    println!("Socket is readable");
                     let mut data = vec![0; 1024];
                     // Try to read data, this may still fail with `WouldBlock`
                     // if the readiness event is a false positive.
                     self.sock.read_exact(&mut data).await.unwrap();
                     let data = String::from_utf8(data).unwrap();
+                    println!("Raw data: {}", data);
                     let parts = data.split(SEP_CHAR);
                     for msg in parts {
                         if !msg.is_empty() {
