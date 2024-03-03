@@ -83,6 +83,11 @@ impl EventHandler for Handler {
                         .run(&command.data.options())
                         .await,
                 ),
+                "progress" => Some(
+                    commands::progress::Progress::new(self.state_handle.clone())
+                        .run(&command.data.options())
+                        .await,
+                ),
                 _ => Some("not implemented :(".to_string()),
             };
 
@@ -121,6 +126,7 @@ impl EventHandler for Handler {
                     commands::queue::add::Add::register(),
                     commands::queue::view::View::register(),
                     commands::queue::clear::Clear::register(),
+                    commands::progress::Progress::register(),
                 ],
             )
             .await;

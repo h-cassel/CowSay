@@ -10,6 +10,7 @@ pub mod ferris_says;
 pub mod info;
 pub mod pause;
 pub mod ping;
+pub mod progress;
 pub mod queue;
 pub mod resume;
 
