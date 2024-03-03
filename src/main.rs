@@ -66,6 +66,11 @@ impl EventHandler for Handler {
                     commands::resume::Resume::new(self.state_handle.clone())
                         .run(&command.data.options())
                         .await,
+                ),                
+                "estop" => Some(
+                    commands::estop::Estop::new(self.state_handle.clone())
+                        .run(&command.data.options())
+                        .await,
                 ),
                 _ => Some("not implemented :(".to_string()),
             };
@@ -101,7 +106,8 @@ impl EventHandler for Handler {
                     commands::cancel::Cancel::register(),
                     commands::pause::Pause::register(),
                     commands::resume::Resume::register(),
-                ],
+                    commands::estop::Estop::register(),
+                    ],
             )
             .await;
 
