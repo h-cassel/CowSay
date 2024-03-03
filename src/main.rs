@@ -43,6 +43,11 @@ impl EventHandler for Handler {
                         .run(&command.data.options())
                         .await,
                 ),
+                "ferris-says" => Some(
+                    commands::ferris_says::FerrisSays::new(self.state_handle.clone())
+                        .run(&command.data.options())
+                        .await,
+                ),
                 _ => Some("not implemented :(".to_string()),
             };
 
@@ -73,6 +78,7 @@ impl EventHandler for Handler {
                     commands::ping::Ping::register(),
                     commands::info::Info::register(),
                     commands::brightness::Brightness::register(),
+                    commands::ferris_says::FerrisSays::register(),
                 ],
             )
             .await;
