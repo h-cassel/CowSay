@@ -3,13 +3,14 @@ use crate::{
     state::StateHandle,
 };
 
-pub mod cancel;
-pub mod pause;
-pub mod resume;
-pub mod info;
-pub mod ping;
 pub mod brightness;
+pub mod cancel;
 pub mod ferris_says;
+pub mod info;
+pub mod pause;
+pub mod ping;
+pub mod queue;
+pub mod resume;
 
 pub async fn send_cmd(state: &StateHandle, cmd: Request) -> Response {
     let state = state.lock().await;

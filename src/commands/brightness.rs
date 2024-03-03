@@ -17,11 +17,18 @@ impl Brightness {
     }
 
     pub async fn run<'a>(&self, _options: &[ResolvedOption<'a>]) -> String {
-        if let Some(ResolvedOption { value: ResolvedValue::Integer(brightness), .. }) = _options.first() {
+        if let Some(ResolvedOption {
+            value: ResolvedValue::Integer(brightness),
+            ..
+        }) = _options.first()
+        {
             if 0 <= *brightness && *brightness <= 100 {
-                let cmd = Request::new("gcode/script".to_string(), json!({
-                    "script": format!("FLOOD_LIGHTS BRIGHTNESS={brightness}")
-                }));
+                let cmd = Request::new(
+                    "gcode/script".to_string(),
+                    Some(json!({
+                        "script": format!("FLOOD_LIGHTS BRIGHTNESS={brightness}")
+                    })),
+                );
                 send_cmd(&self.state_ref, cmd).await;
                 format!("Brightness set to {}", brightness)
             } else {
@@ -33,6 +40,15 @@ impl Brightness {
     }
 
     pub fn register() -> CreateCommand {
-        CreateCommand::new("brightness").description("Set the brightness of the printer LEDs").add_option(CreateCommandOption::new(CommandOptionType::Integer, "brightness", "The brightness to set the LEDs to").required(true))
+        CreateCommand::new("brightness")
+            .description("Set the brightness of the printer LEDs")
+            .add_option(
+                CreateCommandOption::new(
+                    CommandOptionType::Integer,
+                    "brightness",
+                    "The brightness to set the LEDs to",
+                )
+                .required(true),
+            )
     }
 }
