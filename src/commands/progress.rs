@@ -51,6 +51,6 @@ impl Progress {
     }
 
     pub fn register() -> CreateCommand {
-        CreateCommand::new("info").description("Get printer info")
+        CreateCommand::new("progress").description("View the progress of the current print job")
     }
 }
