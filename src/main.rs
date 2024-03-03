@@ -1,7 +1,10 @@
 mod commands;
+mod klipper;
+mod socket;
 mod state;
 
-use commands::slash::SlashCommand;
+use socket::KlippyConnection;
+use tokio::join;
 
 use std::env;
 use std::sync::Arc;
@@ -9,8 +12,8 @@ use std::sync::Arc;
 use serenity::all::{
     CreateInteractionResponse, CreateInteractionResponseMessage, GuildId, Interaction, Ready,
 };
-use serenity::async_trait;
 use serenity::prelude::*;
+use serenity::{async_trait, FutureExt};
 
 struct Handler {
     state_handle: state::StateHandle,
@@ -27,15 +30,21 @@ impl EventHandler for Handler {
             let content = match name {
                 "ping" => Some(
                     commands::ping::Ping::new(self.state_handle.clone())
-                        .run(&command.data.options()),
+                        .run(&command.data.options())
+                        .await,
                 ),
-                "ferris-says" => Some(
-                    commands::ferris_says::FerrisSays::new(self.state_handle.clone())
-                        .run(&command.data.options()),
+                "info" => Some(
+                    commands::info::Info::new(self.state_handle.clone())
+                        .run(&command.data.options())
+                        .await,
+                ),
+                "brightness" => Some(
+                    commands::brightness::Brightness::new(self.state_handle.clone())
+                        .run(&command.data.options())
+                        .await,
                 ),
                 _ => Some("not implemented :(".to_string()),
             };
-
 
             if let Some(content) = content {
                 let data = CreateInteractionResponseMessage::new().content(content);
@@ -58,7 +67,14 @@ impl EventHandler for Handler {
         );
 
         let commands = guild_id
-            .set_commands(&ctx.http, vec![commands::ping::Ping::register(), commands::ferris_says::FerrisSays::register()])
+            .set_commands(
+                &ctx.http,
+                vec![
+                    commands::ping::Ping::register(),
+                    commands::info::Info::register(),
+                    commands::brightness::Brightness::register(),
+                ],
+            )
             .await;
 
         println!(
@@ -68,16 +84,25 @@ impl EventHandler for Handler {
     }
 }
 
+const DEFAULT_SOCK_PATH: &str = "/home/pi/printer_data/comms/klippy.sock";
+
 #[tokio::main]
 async fn main() {
+    dotenv::dotenv().ok();
     // Login with a bot token from the environment
     let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
     // Set gateway intents, which decides what events the bot will be notified about
     let intents = GatewayIntents::GUILD_MESSAGES | GatewayIntents::MESSAGE_CONTENT;
 
+    let socket_path = env::var("KLIP_SOCK_PATH").unwrap_or(DEFAULT_SOCK_PATH.to_string());
+    let mut conn = KlippyConnection::new(socket_path).await;
+
     let state = state::BotState::new();
 
     let state_handle: state::StateHandle = Arc::new(Mutex::new(state));
+
+    let tx = state_handle.lock().await.resp_channel.0.clone();
+    let rx = state_handle.lock().await.req_channel.0.subscribe();
 
     // Create a new instance of the Client, logging in as a bot.
     let mut client = Client::builder(&token, intents)
@@ -85,8 +110,7 @@ async fn main() {
         .await
         .expect("Err creating client");
 
-    // Start listening for events by starting a single shard
-    if let Err(why) = client.start().await {
-        println!("Client error: {why:?}");
-    }
+    let a = { client.start().map(|r| r.ok()) };
+
+    join!(a, conn.req_resp_loop(tx, rx));
 }
