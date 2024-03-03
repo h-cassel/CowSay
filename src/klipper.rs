@@ -7,7 +7,8 @@ use tokio::sync::broadcast;
 pub struct Request {
     pub id: u32,
     pub method: String,
-    pub params: Value,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub params: Option<Value>,
 }
 
 #[derive(Deserialize, Debug, Clone)]
@@ -19,7 +20,7 @@ pub struct Response {
 pub const SEP_CHAR: char = '\x03';
 
 impl Request {
-    pub fn new(method: String, params: Value) -> Request {
+    pub fn new(method: String, params: Option<Value>) -> Request {
         let mut rng = rand::thread_rng();
         let id = rng.gen::<u32>();
         Request { id, method, params }
