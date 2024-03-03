@@ -1,0 +1,33 @@
+name: Continuous Integration (Rust)
+
+on:
+  push:
+    paths:
+      - src/**
+      - ./Cargo.toml
+      - ./Cargo.lock
+
+jobs:
+  rs:
+    name: Check Rust
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          components: clippy, rustfmt
+
+      - name: Setup Rust Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: ${{ runner.os }}-rust-cache-${{ hashFiles('Cargo.lock') }}
+
+      - name: Run Check
+        run: cargo check
+
+      - name: Check Clippy
+        run: cargo lint
