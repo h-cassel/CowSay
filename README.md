@@ -25,6 +25,24 @@ The bot manages a print queue for the printer, and allows users to upload and ma
 
 Ideally an operator will be at the 3D printer watching it as it prints, and the bot will allow them to monitor and control the printer from their phone or computer or anything that has Discord.
 
+## Setup
+
+To get the code, clone the repo.
+
+```sh
+git clone https://github.com/h-cassel/CowSay
+```
+
+Then, you need to set a few environment variables
+
+- `DISCORD_TOKEN`: The token to use to login as the bot
+- `GUILD_ID` : The discord server to register the commands in
+- `KLIP_SOCK_PATH` : The path to the Klipper socket to use to control the printer
+
+Finally, you can run `cargo run --release` to run a release version of the bot
+
+
+
 ## Project Goals
 
 We want to create an accessible Discord bot for people to request prints and monitor their progress.
