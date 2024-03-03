@@ -3,7 +3,6 @@ mod klipper;
 mod socket;
 mod state;
 
-use serenity::json::json;
 use socket::KlippyConnection;
 use tokio::join;
 
@@ -15,9 +14,6 @@ use serenity::all::{
 };
 use serenity::prelude::*;
 use serenity::{async_trait, FutureExt};
-
-use crate::commands::send_cmd;
-use crate::klipper::Request;
 
 struct Handler {
     state_handle: state::StateHandle,
@@ -67,6 +63,21 @@ impl EventHandler for Handler {
                         .run(&command.data.options())
                         .await,
                 ),
+                "print" => Some(
+                    commands::queue::add::Add::new(self.state_handle.clone())
+                        .run(&command.user, &command.data.options())
+                        .await,
+                ),
+                "queue" => Some(
+                    commands::queue::view::View::new(self.state_handle.clone())
+                        .run(&command.data.options())
+                        .await,
+                ),
+                "clear-queue" => Some(
+                    commands::queue::clear::Clear::new(self.state_handle.clone())
+                        .run(&command.data.options())
+                        .await,
+                ),
                 _ => Some("not implemented :(".to_string()),
             };
 
@@ -101,6 +112,9 @@ impl EventHandler for Handler {
                     commands::cancel::Cancel::register(),
                     commands::pause::Pause::register(),
                     commands::resume::Resume::register(),
+                    commands::queue::add::Add::register(),
+                    commands::queue::view::View::register(),
+                    commands::queue::clear::Clear::register(),
                 ],
             )
             .await;

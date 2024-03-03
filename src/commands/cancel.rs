@@ -19,12 +19,10 @@ impl Cancel {
     pub async fn run<'a>(&self, _options: &[ResolvedOption<'a>]) -> String {
         let resp = send_cmd(
             &self.state_ref,
-            Request::new(
-                "pause_resume/cancel".to_string(),
-                Value::Null
+            Request::new("pause_resume/cancel".to_string(), Value::Null),
         )
-    ).await;
-    "Cancelled".to_string()
+        .await;
+        "Cancelled".to_string()
     }
 
     pub fn register() -> CreateCommand {

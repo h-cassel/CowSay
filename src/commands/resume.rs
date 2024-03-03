@@ -19,12 +19,10 @@ impl Resume {
     pub async fn run<'a>(&self, _options: &[ResolvedOption<'a>]) -> String {
         let resp = send_cmd(
             &self.state_ref,
-            Request::new(
-                "pause_resume/resume".to_string(),
-                Value::Null
+            Request::new("pause_resume/resume".to_string(), Value::Null),
         )
-    ).await;
-    "Resumed".to_string()
+        .await;
+        "Resumed".to_string()
     }
 
     pub fn register() -> CreateCommand {

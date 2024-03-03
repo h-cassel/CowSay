@@ -19,12 +19,10 @@ impl Pause {
     pub async fn run<'a>(&self, _options: &[ResolvedOption<'a>]) -> String {
         let resp = send_cmd(
             &self.state_ref,
-            Request::new(
-                "pause_resume/pause".to_string(),
-                Value::Null
+            Request::new("pause_resume/pause".to_string(), Value::Null),
         )
-    ).await;
-    "Paused".to_string()
+        .await;
+        "Paused".to_string()
     }
 
     pub fn register() -> CreateCommand {
